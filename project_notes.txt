@@ -1,0 +1,36 @@
+Dear Students,
+
+The DSP course project has been assigned, and the project documents are now available in the course shared file (Google Drive).
+
+Project Title:
+“Audio Deepfake Detection Using Classical DSP Techniques”
+
+The project focuses on applying DSP concepts studied in this course to a modern real-world application, including:
+
+FFT and spectral analysis
+Digital filter design
+FIR/IIR filter structures
+Correlation
+Windowing
+Z-transform analysis
+Group delay
+Feature extraction and signal classification
+Project Requirements:
+
+Students must work in groups of 3 students.
+Each group is required to submit:
+Source code
+Technical report
+Results and figures
+Final presentation
+Important Notes:
+
+The project should not rely only on machine learning. The main focus must remain on DSP analysis and signal processing techniques.
+Students are encouraged to reproduce the baseline system first, then propose at least one DSP-based improvement or extension.
+Deadline:
+Please submit the complete project before:
+21-6-2026
+
+In addition, the project will be included in a short written discussion during the final exam period.
+
+Best Slam,
