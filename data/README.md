@@ -1,7 +1,7 @@
 # Dataset
 
 **Source:** ASVspoof2019 Logical Access (LA), eval partition.
-Edinburgh DataShare: https://doi.org/10.7488/ds/2555
+Edinburgh DataShare: https://datashare.ed.ac.uk/items/31074a11-b6f6-4e92-a4ad-07093f8c0c45
 
 **Subset:** 150 bonafide + 150 spoof files, selected from the official
 evaluation protocol file via `scripts/select_subset.py`.
