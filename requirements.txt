@@ -10,5 +10,8 @@ matplotlib==3.11.0
 # Data handling
 pandas==2.2.3
 
+# Machine learning
+scikit-learn==1.9.0
+
 # Dataset download
 remotezip==0.12.3
