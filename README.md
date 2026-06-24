@@ -4,10 +4,8 @@ Detecting AI-generated / spoofed speech using classical digital signal processin
 
 Built on the ASVspoof2019 LA evaluation dataset. Reproduces and extends the feature pipeline from Alzantot et al. (Interspeech 2019).
 
-**Course:** Digital Signal Processing
-
-**Partners:** Joud Thaher, Rand Saleh, Rahaf Alqam
-
+**Course:** Digital Signal Processing  
+**Partners:** Joud Thaher, Rand Saleh, Rahaf Alqam  
 **Result:** 88.3% accuracy · F1 = 0.885 · ROC-AUC = 0.938 (SVM, RBF kernel)
 
 ---
@@ -55,6 +53,7 @@ audio-deepfake-detection-dsp/
 │   ├── external/
 │   │   ├── selected_real.txt     # ✅ committed — chosen real filenames
 │   │   └── selected_fake.txt     # ✅ committed — chosen fake filenames
+│   │   └── protocol.txt          # ❌ not committed — re-downloaded by fetch_protocol.py
 │   ├── raw/                      # ❌ not committed — download via scripts
 │   │   ├── real/                 #    150 × .flac  (~15 MB)
 │   │   └── fake/                 #    150 × .flac  (~15 MB)
@@ -71,11 +70,12 @@ audio-deepfake-detection-dsp/
 │       ├── spectrogram_real_vs_fake.png
 │       ├── time_domain_real_vs_fake.png
 │       └── preemphasis_*.png
+│
 ├── docs/
 │   ├── Project Description.pdf
-│   └── alzantot19_interspeech.pdf   # reference paper
+│   └── alzantot19_interspeech.pdf
 │
-├── paper/                        # Final submitted report
+├── paper/
 │   └── Audio_Deepfake_Detection_Using_Classical_DSP_Techniques.pdf
 │
 ├── requirements.txt
@@ -86,15 +86,15 @@ audio-deepfake-detection-dsp/
 
 ## What Is and Isn't Committed
 
-| Path                           | Committed | Why                                                |
-| ------------------------------ | --------- | -------------------------------------------------- |
-| `data/split.csv`               | ✅ yes    | shared manifest — everyone uses the same split     |
-| `data/external/selected_*.txt` | ✅ yes    | defines the exact 300-file subset                  |
-| `data/raw/`                    | ❌ no     | ~30 MB audio; regenerated in 5 minutes via scripts |
-| `data/processed/`              | ❌ no     | regenerable from raw via `process_dataset.py`      |
-| `results/features.csv`         | ❌ no     | regenerable by `run_pipeline.py`                   |
-| `results/figures/*.png`        | ✅ yes    | lets reviewers see output without re-running       |
-| `data/external/protocol.txt`   | ❌ no     | 2.3 MB; re-downloaded by `fetch_protocol.py`       |
+| Path | Committed | Why |
+|---|---|---|
+| `data/split.csv` | ✅ yes | shared manifest — everyone uses the same split |
+| `data/external/selected_*.txt` | ✅ yes | defines the exact 300-file subset |
+| `data/external/protocol.txt` | ❌ no | 2.3 MB; re-downloaded by `fetch_protocol.py` |
+| `data/raw/` | ❌ no | ~30 MB audio; regenerated in minutes via scripts |
+| `data/processed/` | ❌ no | regenerable from raw via `process_dataset.py` |
+| `results/features.csv` | ❌ no | regenerable by `run_pipeline.py` |
+| `results/figures/*.png` | ✅ yes | lets reviewers see output without re-running |
 
 ---
 
@@ -112,7 +112,7 @@ pip install -r requirements.txt
 
 ## Reproducing the Dataset
 
-The raw audio is not in the repo (30 MB, ASVspoof2019 license). Run these once from the repo root **in order**:
+The raw audio is not in the repo (~30 MB, ASVspoof2019 license). Run these once from the repo root **in order**:
 
 ```bash
 python scripts/list_remote_contents.py   # verify remote archive is reachable
@@ -171,15 +171,15 @@ Constants: `SR = 16000`, frame = 25 ms @ 16kHz = 400 samples, 50% overlap, Hammi
 
 Extracts a 14-dimensional DSP feature vector per file (mean + std of 7 features):
 
-| Feature            | Description                               |
-| ------------------ | ----------------------------------------- |
-| Spectral centroid  | Weighted mean frequency                   |
-| Spectral bandwidth | Spread around centroid                    |
-| Spectral rolloff   | Frequency below which 85% of energy falls |
-| Spectral flatness  | Tonal vs. noise-like signal ratio         |
-| Zero-crossing rate | Sign changes per frame                    |
-| Short-time energy  | Frame-level energy                        |
-| Autocorrelation    | Max normalized lag-1+ correlation         |
+| Feature | Description |
+|---|---|
+| Spectral centroid | Weighted mean frequency |
+| Spectral bandwidth | Spread around centroid |
+| Spectral rolloff | Frequency below which 85% of energy falls |
+| Spectral flatness | Tonal vs. noise-like signal ratio |
+| Zero-crossing rate | Sign changes per frame |
+| Short-time energy | Frame-level energy |
+| Autocorrelation | Max normalized lag-1+ correlation |
 
 ### `src/classify.py`
 
@@ -193,30 +193,30 @@ FIR/IIR filter design and analysis utilities (frequency response, pole-zero plot
 
 ## Scripts Reference
 
-| Script                    | Purpose                                                   |
-| ------------------------- | --------------------------------------------------------- |
-| `list_remote_contents.py` | Browse the Edinburgh DataShare ZIP index                  |
-| `fetch_protocol.py`       | Download the ASVspoof2019 LA eval protocol                |
-| `select_subset.py`        | Choose 150 real + 150 fake files deterministically        |
-| `extract_subset.py`       | Download only those files via HTTP range requests         |
-| `verify_subset.py`        | Assert all 300 files are present and readable             |
-| `process_dataset.py`      | Convert raw `.flac` → windowed `.npy` frames              |
-| `make_split.py`           | Write `data/split.csv` (80/20 stratified split)           |
-| `test_handoff.py`         | 7-step sanity check — run after any setup change          |
-| `run_pipeline.py`         | Extract features → train SVM → print metrics → save plots |
-| `make_plots.py`           | Time-domain, FFT, and spectrogram comparison plots        |
+| Script | Purpose |
+|---|---|
+| `list_remote_contents.py` | Browse the Edinburgh DataShare ZIP index |
+| `fetch_protocol.py` | Download the ASVspoof2019 LA eval protocol |
+| `select_subset.py` | Choose 150 real + 150 fake files deterministically |
+| `extract_subset.py` | Download only those files via HTTP range requests |
+| `verify_subset.py` | Assert all 300 files are present and readable |
+| `process_dataset.py` | Convert raw `.flac` → windowed `.npy` frames |
+| `make_split.py` | Write `data/split.csv` (80/20 stratified split) |
+| `test_handoff.py` | 7-step sanity check — run after any setup change |
+| `run_pipeline.py` | Extract features → train SVM → print metrics → save plots |
+| `make_plots.py` | Time-domain, FFT, and spectrogram comparison plots |
 
 ---
 
 ## Results
 
-| Metric    | Value |
-| --------- | ----- |
-| Accuracy  | 88.3% |
+| Metric | Value |
+|---|---|
+| Accuracy | 88.3% |
 | Precision | 0.871 |
-| Recall    | 0.900 |
-| F1-score  | 0.885 |
-| ROC-AUC   | 0.938 |
+| Recall | 0.900 |
+| F1-score | 0.885 |
+| ROC-AUC | 0.938 |
 
 Top discriminating features (Random Forest importance): `spectral_bandwidth_mean`, `spectral_flatness_mean`, `spectral_rolloff_std`.
 
