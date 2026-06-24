@@ -1,6 +1,4 @@
-"""
-Train/test split manifest — shared contract for B and C.
-"""
+"""Train/test split manifest."""
 import os, csv, random
 
 def make_split(raw_dir="data/raw", out_csv="data/split.csv", test_ratio=0.2, seed=42):

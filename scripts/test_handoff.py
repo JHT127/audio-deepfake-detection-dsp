@@ -1,18 +1,7 @@
-
 """
-scripts/test_handoff.py
------------------------
-Handoff sanity-check script for Person A's preprocessing output.
+Sanity-check preprocessing output.
 
-Run this from the repo root BEFORE handing off to teammates B and C:
-
-    python scripts/test_handoff.py
-
-It mimics exactly what B (feature extraction) and C (classification)
-would write on day one when they sit down to use Person A's output.
-Any shape mismatch, naming error, or API surprise surfaces here first.
-
-Expected output at the end: "ALL CHECKS PASSED — handoff is ready."
+Run from repo root: python scripts/test_handoff.py
 """
 
 import sys
@@ -20,15 +9,13 @@ import csv
 import pathlib
 import numpy as np
 
-# ── 0. Path setup ──────────────────────────────────────────────────────────────
 REPO_ROOT   = pathlib.Path(__file__).resolve().parents[1]
 SPLIT_CSV   = REPO_ROOT / "data" / "split.csv"
 PROCESSED   = REPO_ROOT / "data" / "processed"
 SRC         = REPO_ROOT / "src"
 
-sys.path.insert(0, str(REPO_ROOT))          # so `from src.preprocessing import …` works
+sys.path.insert(0, str(REPO_ROOT))
 
-# ── 1. Import the preprocessing module (catches import errors immediately) ──────
 print("─" * 60)
 print("[1/7] Importing src.preprocessing …")
 try:
@@ -43,7 +30,6 @@ try:
 except Exception as e:
     sys.exit(f"  FAIL: {e}")
 
-# ── 2. Parse split.csv and verify structure ────────────────────────────────────
 print("[2/7] Reading data/split.csv …")
 try:
     rows = []
@@ -73,7 +59,6 @@ try:
 except Exception as e:
     sys.exit(f"  FAIL: {e}")
 
-# ── 3. Verify .npy files exist on disk for every split.csv row ────────────────
 print("[3/7] Verifying .npy files exist for every split.csv row …")
 missing = []
 for row in rows:
@@ -86,10 +71,9 @@ if missing:
              "\n".join(missing[:5]) + ("\n  …" if len(missing) > 5 else ""))
 print(f"      OK  all 300 .npy files present")
 
-# ── 4. Shape check on a handful of files (simulates what B does on load) ──────
 print("[4/7] Shape-checking sampled .npy files …")
-EXPECTED_FRAME_WIDTH = 400   # 25 ms × 16000 Hz
-EXPECTED_SPEC_BINS   = 201   # rfft bins for 400-sample frame
+EXPECTED_FRAME_WIDTH = 400
+EXPECTED_SPEC_BINS   = 201
 
 sample_rows = [r for r in rows if r["split"] == "train"][:3] + \
               [r for r in rows if r["split"] == "test" ][:3]
@@ -98,7 +82,6 @@ for row in sample_rows:
     path   = PROCESSED / row["label"] / row["filename"]
     frames = np.load(path)
 
-    # frames should be 2-D: (num_frames, 400)
     assert frames.ndim == 2, \
         f"{path.name}: expected 2-D array, got shape {frames.shape}"
     assert frames.shape[1] == EXPECTED_FRAME_WIDTH, \
@@ -112,10 +95,8 @@ for row in sample_rows:
 
 print("      OK  all sampled frames are (num_frames, 400)")
 
-# ── 5. Test get_spectrogram() and get_log_spectrogram() ──────────────────────
-#       This is EXACTLY what B will call in features.py
 print("[5/7] Testing spectrogram functions on the same samples …")
-for row in sample_rows[:2]:   # just 2 is enough; they all go through the same path
+for row in sample_rows[:2]:
     path   = PROCESSED / row["label"] / row["filename"]
     frames = np.load(path)
 
@@ -134,8 +115,6 @@ for row in sample_rows[:2]:   # just 2 is enough; they all go through the same p
 
 print("      OK  spectrogram functions return (num_frames, 201) finite arrays")
 
-# ── 6. Test load_and_frame() end-to-end on raw .flac files ───────────────────
-#       B/C might call this directly instead of loading .npy; verify it matches
 print("[6/7] Testing load_and_frame() on raw .flac files …")
 RAW_DIRS = {
     "real": REPO_ROOT / "data" / "raw" / "real",
@@ -148,10 +127,8 @@ for label, raw_dir in RAW_DIRS.items():
     if not flacs:
         print(f"      SKIP ({label}): no .flac files found in {raw_dir}")
         continue
-    # check 2 files per class
     for flac_path in flacs[:2]:
         frames_live = load_and_frame(flac_path)
-        # Compare to the pre-saved .npy (base name differs only in extension)
         npy_path    = PROCESSED / label / (flac_path.stem + ".npy")
         if npy_path.exists():
             frames_saved = np.load(npy_path)
@@ -174,36 +151,33 @@ if flac_checked == 0:
 else:
     print(f"      OK  load_and_frame() matches saved .npy on {flac_checked} files")
 
-# ── 7. Summarise the data contract one more time (acts as living docs) ─────────
-print("[7/7] Data-contract summary for teammates B and C:")
+print("[7/7] Data-contract summary:")
 print("""
     File:   data/split.csv
     Cols:   filename (.npy), label (real|fake), split (train|test)
 
     To load frames for a row:
         frames = np.load(f"data/processed/{row['label']}/{row['filename']}")
-        # shape: (num_frames, 400)   — 25 ms Hamming-windowed frames at 16 kHz
+        # shape: (num_frames, 400)
 
-    To get magnitude spectrogram (what B needs for most features):
+    To get magnitude spectrogram:
         from src.preprocessing import get_spectrogram
         spec = get_spectrogram(frames)
-        # shape: (num_frames, 201)   — rfft magnitude, NOT log-scaled
+        # shape: (num_frames, 201)
 
-    To get log-magnitude spectrogram (closest to Alzantot et al.):
+    To get log-magnitude spectrogram:
         from src.preprocessing import get_log_spectrogram
         log_spec = get_log_spectrogram(frames)
-        # shape: (num_frames, 201)   — log10(|X[k]| + 1e-10)
+        # shape: (num_frames, 201)
 
     SR constant (always 16000):
         from src.preprocessing import SR
 
-    Alternative — load from raw .flac directly (bypasses .npy cache):
+    Load from raw .flac directly:
         from src.preprocessing import load_and_frame
         frames = load_and_frame("data/raw/real/LA_E_1000265.flac")
-        # same shape contract as above
 """)
 
-# ── Done ───────────────────────────────────────────────────────────────────────
 print("─" * 60)
 print("ALL CHECKS PASSED — handoff is ready.")
 print("─" * 60)

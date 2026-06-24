@@ -1,11 +1,7 @@
 """
-Generate the required Task 2-4 deliverable plots:
-  1. Time-domain plot: one real vs one fake signal
-  2. FFT magnitude plot for a single frame (real vs fake)
-  3. Spectrogram comparison (real vs fake)
+Generate comparison plots (time domain, FFT magnitude, spectrogram).
 
-Saves all figures to results/figures/ as labeled PNGs.
-Run from the repo root: python scripts/make_plots.py
+Saves figures to results/figures/. Run from repo root: python scripts/make_plots.py
 """
 
 import os
@@ -37,8 +33,7 @@ def main():
     print(f"Real file: {real_path}")
     print(f"Fake file: {fake_path}")
 
-    # ---- 1. Time-domain plot ----
-    real_audio = load_audio(real_path)   # already 16kHz, peak-normalized
+    real_audio = load_audio(real_path)
     fake_audio = load_audio(fake_path)
     sr = SR
 
@@ -55,8 +50,7 @@ def main():
     plt.close(fig)
     print("Saved: time_domain_real_vs_fake.png")
 
-    # ---- 2. FFT magnitude plot for a single frame ----
-    real_frames = load_and_frame(real_path)   # (num_frames, 400), already windowed
+    real_frames = load_and_frame(real_path)
     fake_frames = load_and_frame(fake_path)
 
     frame_idx = min(10, real_frames.shape[0] - 1, fake_frames.shape[0] - 1)
@@ -80,12 +74,11 @@ def main():
     plt.close(fig)
     print("Saved: fft_magnitude_real_vs_fake.png")
 
-    # ---- 3. Spectrogram comparison ----
-    real_log_spec = get_log_spectrogram(real_frames)   # (num_frames, 201)
+    real_log_spec = get_log_spectrogram(real_frames)
     fake_log_spec = get_log_spectrogram(fake_frames)
 
     frame_len_s = real_frames.shape[1] / sr
-    hop_s = frame_len_s / 2  # 50% overlap, per frame_signal()
+    hop_s = frame_len_s / 2
 
     fig, axes = plt.subplots(1, 2, figsize=(12, 5), sharey=True)
     im = None
