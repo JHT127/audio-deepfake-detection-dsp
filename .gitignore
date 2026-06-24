@@ -7,19 +7,21 @@ data/raw/*
 data/processed/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
-
-# Keep the committed manifest and protocol files
 !data/split.csv
-data/external/protocol.txt   # 2.3 MB, re-downloaded by fetch_protocol.py
+
+# ----- External data (large / regenerable) -------------------
+data/external/protocol.txt
 
 # ----- Results (regenerable by running the pipeline) ---------
 results/features.csv
-# Figures are committed so reviewers can see output without re-running
-# To exclude them too, uncomment the two lines below:
+results/.DS_Store
+
+# Figures are committed so reviewers can see output without re-running.
+# To exclude them too, uncomment:
 # results/figures/*
 # !results/figures/.gitkeep
 
-# ----- Python -------------------------------------------------
+# ----- Python ------------------------------------------------
 __pycache__/
 *.py[cod]
 *.pyo
@@ -38,11 +40,12 @@ dist/
 build/
 *.egg
 
-# ----- Jupyter ------------------------------------------------
+# ----- Jupyter -----------------------------------------------
 .ipynb_checkpoints/
 *.ipynb_checkpoints
+notebooks/
 
-# ----- OS junk ------------------------------------------------
+# ----- OS junk -----------------------------------------------
 .DS_Store
 Thumbs.db
 desktop.ini
@@ -50,13 +53,13 @@ desktop.ini
 *.swp
 *.swo
 
-# ----- IDEs ---------------------------------------------------
+# ----- IDEs --------------------------------------------------
 .vscode/
 .idea/
 *.suo
 *.user
 
-# ----- Misc ---------------------------------------------------
+# ----- Misc --------------------------------------------------
 *.log
 *.tmp
 *.bak
