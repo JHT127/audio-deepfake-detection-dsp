@@ -1,9 +1,4 @@
-# scripts/fetch_protocol.py
-"""
-Step 2: Download only the protocol file (a few hundred KB)
-from the remote zip, so we can select our subset before
-touching any audio.
-"""
+"""Download protocol file from remote zip."""
 import os
 from remotezip import RemoteZip
 

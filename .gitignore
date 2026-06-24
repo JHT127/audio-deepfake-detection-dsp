@@ -1,15 +1,62 @@
-# Data (too large / regenerable)
+# =============================================================
+#  Audio Deepfake Detection — .gitignore
+# =============================================================
+
+# ----- Raw & processed audio data (large / regenerable) ------
 data/raw/*
 data/processed/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
+
+# Keep the committed manifest and protocol files
 !data/split.csv
+data/external/protocol.txt   # 2.3 MB, re-downloaded by fetch_protocol.py
 
-# Notebooks checkpoints
-.ipynb_checkpoints/
+# ----- Results (regenerable by running the pipeline) ---------
+results/features.csv
+# Figures are committed so reviewers can see output without re-running
+# To exclude them too, uncomment the two lines below:
+# results/figures/*
+# !results/figures/.gitkeep
 
-# Python
+# ----- Python -------------------------------------------------
 __pycache__/
-*.pyc
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
 .venv/
-venv/.DS_Store
+venv/
+env/
+ENV/
+
+# Distribution / packaging
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ----- Jupyter ------------------------------------------------
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ----- OS junk ------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+*~
+*.swp
+*.swo
+
+# ----- IDEs ---------------------------------------------------
+.vscode/
+.idea/
+*.suo
+*.user
+
+# ----- Misc ---------------------------------------------------
+*.log
+*.tmp
+*.bak

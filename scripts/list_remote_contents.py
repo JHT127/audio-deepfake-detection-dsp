@@ -1,9 +1,4 @@
-# scripts/list_remote_contents.py
-"""
-Step 1: Connect to the remote LA.zip and list its contents
-without downloading the archive. Run this first to confirm
-the internal folder structure and find the protocol file path.
-"""
+"""List remote archive contents and find protocol file."""
 from remotezip import RemoteZip
 
 URL = "https://datashare.ed.ac.uk/bitstreams/a9f87c35-f055-4015-80e2-2fdff0d46269/download"

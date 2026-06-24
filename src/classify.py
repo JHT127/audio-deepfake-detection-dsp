@@ -22,21 +22,7 @@ def _build_classifier():
 
 def train_and_evaluate(X_train, y_train, X_test, y_test,
                        save_dir="results/figures"):
-    """Train classifier and return evaluation metrics.
-
-    Args:
-        X_train, X_test: feature matrices, shape (n_samples, num_features).
-        y_train, y_test: label vectors (1=real, 0=fake).
-        save_dir: directory where the confusion-matrix plot is saved.
-
-    Returns:
-        dict with keys:
-            accuracy, precision, recall, f1, roc_auc,
-            confusion_matrix  (2×2 np.ndarray),
-            y_pred            (predictions on test set),
-            classifier        (fitted sklearn estimator),
-            scaler            (fitted StandardScaler).
-    """
+    """Train SVM classifier and evaluate. Returns metrics dict."""
     scaler = StandardScaler()
     X_train_scaled = scaler.fit_transform(X_train)
     X_test_scaled  = scaler.transform(X_test)
@@ -44,18 +30,17 @@ def train_and_evaluate(X_train, y_train, X_test, y_test,
     clf = _build_classifier()
     clf.fit(X_train_scaled, y_train)
 
-    y_pred      = clf.predict(X_test_scaled)
-    y_prob      = clf.predict_proba(X_test_scaled)[:, 1]   # P(real)
-
-    acc       = accuracy_score(y_test, y_pred)
-    prec      = precision_score(y_test, y_pred, zero_division=0)
-    rec       = recall_score(y_test, y_pred, zero_division=0)
-    f1        = f1_score(y_test, y_pred, zero_division=0)
-    cm        = confusion_matrix(y_test, y_pred)
+    y_pred = clf.predict(X_test_scaled)
+    y_prob = clf.predict_proba(X_test_scaled)[:, 1]
+    acc = accuracy_score(y_test, y_pred)
+    prec = precision_score(y_test, y_pred, zero_division=0)
+    rec = recall_score(y_test, y_pred, zero_division=0)
+    f1 = f1_score(y_test, y_pred, zero_division=0)
+    cm = confusion_matrix(y_test, y_pred)
     try:
-        auc   = roc_auc_score(y_test, y_prob)
+        auc = roc_auc_score(y_test, y_prob)
     except ValueError:
-        auc   = float("nan")
+        auc = float("nan")
 
     os.makedirs(save_dir, exist_ok=True)
     fig, ax = plt.subplots(figsize=(5, 5))
@@ -86,17 +71,7 @@ def train_and_evaluate(X_train, y_train, X_test, y_test,
 
 def feature_importance_report(X_train, y_train, feature_names,
                                save_dir="results/figures"):
-    """Train a Random Forest and return feature importances.
-
-    Args:
-        X_train: feature matrix (n_samples, num_features).
-        y_train: labels.
-        feature_names: list of strings, len == num_features.
-        save_dir: directory to save the bar-chart PNG.
-
-    Returns:
-        dict mapping feature_name -> importance (float).
-    """
+    """Train Random Forest and return feature importances dict."""
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X_train)
 

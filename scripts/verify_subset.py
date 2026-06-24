@@ -1,8 +1,4 @@
-# scripts/verify_subset.py
-"""
-Step 5: Sanity check that extracted files actually load and
-report their sample rate / duration.
-"""
+"""Verify extracted audio files load correctly."""
 import os, librosa
 
 for label in ["real", "fake"]:

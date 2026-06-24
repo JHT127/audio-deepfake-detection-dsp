@@ -1,8 +1,4 @@
-"""
-Generate comparison plots (time domain, FFT magnitude, spectrogram).
-
-Saves figures to results/figures/. Run from repo root: python scripts/make_plots.py
-"""
+"""Generate comparison plots: time domain, FFT magnitude, spectrogram."""
 
 import os
 import sys

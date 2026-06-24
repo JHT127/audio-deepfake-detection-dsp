@@ -19,7 +19,7 @@ OVERLAP = 0.5        # fractional overlap between consecutive frames
 
 
 def load_audio(filepath, sr=SR):
-    """Load audio, resample to `sr`, and peak-normalize to [-1, 1]."""
+    """Load audio, resample to sr, and peak-normalize."""
     y, _ = librosa.load(filepath, sr=sr, mono=True)
     peak = np.max(np.abs(y))
     if peak > 0:
@@ -28,12 +28,12 @@ def load_audio(filepath, sr=SR):
 
 
 def pre_emphasis(y, alpha=0.97):
-    """Pre-emphasis filter: y[n] - alpha * y[n-1]. Optional, not used by default."""
+    """Pre-emphasis filter."""
     return np.append(y[0], y[1:] - alpha * y[:-1])
 
 
 def frame_signal(y, sr=SR, frame_ms=FRAME_MS, overlap=OVERLAP, window="hamming"):
-    """Split signal into overlapping Hamming/Hann-windowed frames."""
+    """Split signal into overlapping windowed frames."""
     frame_len = int(sr * frame_ms / 1000)
     hop_len = int(frame_len * (1 - overlap))
 
@@ -65,11 +65,11 @@ def load_and_frame(filepath, apply_preemph=False, window="hamming"):
 
 
 def get_spectrogram(frames):
-    """Magnitude spectrogram via rFFT, shape (num_frames, frame_len // 2 + 1)."""
+    """Magnitude spectrogram via rFFT."""
     return np.abs(np.fft.rfft(frames, axis=1))
 
 
 def get_log_spectrogram(frames):
-    """Log-magnitude spectrogram (dB-like scale)."""
+    """Log-magnitude spectrogram."""
     spec = get_spectrogram(frames)
     return 20 * np.log10(spec + 1e-9)

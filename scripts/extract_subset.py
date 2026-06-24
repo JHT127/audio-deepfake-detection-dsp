@@ -1,8 +1,4 @@
-# scripts/extract_subset.py
-"""
-Step 4: Extract only the 300 selected audio files from the
-remote zip, byte-range by byte-range — not the full archive.
-"""
+"""Extract selected audio files from remote zip."""
 import os, shutil
 from remotezip import RemoteZip
 

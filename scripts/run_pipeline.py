@@ -40,14 +40,7 @@ FIGURES_DIR = os.path.join(RESULTS_DIR, "figures")
 
 
 def load_feature_matrix(split_df):
-    """
-    Iterate over split.csv, load each .npy frame array, extract features.
-
-    Returns:
-        X      : np.ndarray, shape (n_files, num_features)
-        y      : np.ndarray, shape (n_files,)  1=real, 0=fake
-        splits : list of str  "train" | "test"
-    """
+    """Load frames, extract features. Returns X, y, splits."""
     feature_names = get_feature_names()
     X, y, splits = [], [], []
     n = len(split_df)
@@ -58,9 +51,8 @@ def load_feature_matrix(split_df):
             print(f"  WARNING: missing {npy_path} — skipping")
             continue
 
-        frames = np.load(npy_path)          # (num_frames, 400)
-        feat   = extract_features(frames)   # (14,)
-
+        frames = np.load(npy_path)
+        feat = extract_features(frames)
         X.append(feat)
         y.append(1 if row["label"] == "real" else 0)
         splits.append(row["split"])
@@ -72,11 +64,11 @@ def load_feature_matrix(split_df):
 
 
 def save_features_csv(X, y, splits, split_df, out_path):
-    """Save feature matrix to CSV for inspection."""
+    """Save feature matrix to CSV."""
     feature_names = get_feature_names()
     df = pd.DataFrame(X, columns=feature_names)
-    df.insert(0, "label",    ["real" if yi == 1 else "fake" for yi in y])
-    df.insert(1, "split",    splits)
+    df.insert(0, "label", ["real" if yi == 1 else "fake" for yi in y])
+    df.insert(1, "split", splits)
     df.insert(2, "filename", split_df["filename"].values[:len(X)])
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     df.to_csv(out_path, index=False)
@@ -102,12 +94,11 @@ def main():
     save_features_csv(X, y, splits, split_df, features_csv)
 
     print("\n[3/5] Splitting train / test …")
-    splits_arr  = np.array(splits)
-    train_mask  = splits_arr == "train"
-    test_mask   = splits_arr == "test"
-
+    splits_arr = np.array(splits)
+    train_mask = splits_arr == "train"
+    test_mask = splits_arr == "test"
     X_train, y_train = X[train_mask], y[train_mask]
-    X_test,  y_test  = X[test_mask],  y[test_mask]
+    X_test, y_test = X[test_mask], y[test_mask]
     print(f"      Train: {X_train.shape[0]} samples   "
           f"Test: {X_test.shape[0]} samples")
 

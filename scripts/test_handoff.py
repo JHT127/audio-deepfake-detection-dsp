@@ -1,8 +1,4 @@
-"""
-Sanity-check preprocessing output.
-
-Run from repo root: python scripts/test_handoff.py
-"""
+"""Sanity-check preprocessing pipeline."""
 
 import sys
 import csv

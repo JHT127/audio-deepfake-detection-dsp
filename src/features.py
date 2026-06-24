@@ -15,53 +15,39 @@ def _safe_mean_std(values):
 
 
 def _zero_crossing_rate(frames):
-    """Zero-crossing rate per frame."""
+    """Compute zero-crossing rate."""
     signs = np.sign(frames)
     signs[signs == 0] = 1
-
     zcr = np.mean(signs[:, 1:] != signs[:, :-1], axis=1)
     return zcr
 
 
 def _short_time_energy(frames):
-    """Short-time energy per frame."""
+    """Compute short-time energy."""
     return np.sum(frames ** 2, axis=1)
 
 
 def _autocorrelation_feature(frames):
-    """Max normalized autocorrelation after lag 0."""
+    """Max normalized autocorrelation."""
     autocorr_values = []
-
     for frame in frames:
         frame = frame - np.mean(frame)
         energy = np.sum(frame ** 2)
-
         if energy < 1e-12:
             autocorr_values.append(0.0)
             continue
-
         corr = np.correlate(frame, frame, mode="full")
         corr = corr[len(corr) // 2:]
         corr = corr / (corr[0] + 1e-12)
-
         if len(corr) > 1:
             autocorr_values.append(float(np.max(corr[1:])))
         else:
             autocorr_values.append(0.0)
-
     return np.array(autocorr_values)
 
 
 def extract_features(frames):
-    """
-    Extract a flat DSP feature vector from windowed frames.
-
-    Args:
-        frames: np.ndarray, shape (num_frames, 400)
-
-    Returns:
-        np.ndarray, shape (num_features,)
-    """
+    """Extract DSP feature vector from windowed frames."""
 
     frames = np.asarray(frames, dtype=float)
 

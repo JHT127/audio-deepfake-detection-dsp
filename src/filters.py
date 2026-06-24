@@ -24,7 +24,7 @@ def apply_preemphasis(x, alpha=0.97):
 
 
 def plot_pole_zero(b, a, save_path="results/figures/preemphasis_pole_zero.png"):
-    """Plot and save the pole-zero diagram."""
+    """Plot pole-zero diagram."""
     zeros, poles, _ = signal.tf2zpk(b, a)
 
     plt.figure(figsize=(6, 6))
@@ -50,7 +50,7 @@ def plot_pole_zero(b, a, save_path="results/figures/preemphasis_pole_zero.png"):
 
 
 def plot_frequency_response(b, a, save_path="results/figures/preemphasis_magnitude_phase.png"):
-    """Plot and save magnitude and phase response."""
+    """Plot magnitude and phase response."""
     w, h = signal.freqz(b, a, worN=1024)
 
     magnitude_db = 20 * np.log10(np.abs(h) + 1e-12)
@@ -79,7 +79,7 @@ def plot_frequency_response(b, a, save_path="results/figures/preemphasis_magnitu
 
 
 def plot_group_delay(b, a, save_path="results/figures/preemphasis_group_delay.png"):
-    """Plot and save group delay."""
+    """Plot group delay."""
     w, gd = signal.group_delay((b, a), w=1024)
 
     plt.figure(figsize=(8, 5))

@@ -1,9 +1,4 @@
-# scripts/select_subset.py
-"""
-Step 3: Read the protocol file and pick 150 bonafide + 150 spoof
-filenames. Adjust the column indices below to match what you saw
-when you ran `head data/external/protocol.txt`.
-"""
+"""Select 150 real and 150 fake samples from protocol file."""
 import os
 
 PROTOCOL_PATH = "data/external/protocol.txt"
